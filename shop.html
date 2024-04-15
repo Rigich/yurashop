@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Юрчік Шоп - магазин вейп-товарів</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Ласкаво просимо до Юрчік Шоп!</h1>
+
+    <div class="product">
+        <img src="barsetka.jpg" alt="Барсетка">
+        <div>
+            <h3>Барсетка</h3>
+            <p><strong>Опис:</strong> Стильна і зручна барсетка для зберігання та перенесення вашого вейп-обладнання.</p>
+            <p><strong>Ціна:</strong> 600 грн</p>
+            <button onclick="addToCart('Барсетка', 600, 'barsetka.jpg')">Додати до кошика</button>
+        </div>
+    </div>
+
+    <div class="product">
+        <img src="pod.jpg" alt="Подік">
+        <div>
+            <h3>Подік</h3>
+            <p><strong>Опис:</strong> Найсучасніші поди, забезпечать максимальний комфорт та смакові відчуття.</p>
+            <p><strong>Ціна:</strong> 220 грн</p>
+            <button onclick="addToCart('Подік', 220, 'pod.jpg')">Додати до кошика</button>
+        </div>
+    </div>
+
+    <div class="product">
+        <img src="zhyzha.jpg" alt="Жижа для подіка">
+        <div>
+            <h3>Жижа для вейпу</h3>
+            <p><strong>Опис:</strong> Великий вибір найсмачніших жиж для вашого подіка. Від класичних смаків до екзотичних комбінацій.</p>
+            <p><strong>Ціна:</strong> Від 150 грн</p>
+            <button onclick="addToCart('Жижа для подіка', 150, 'zhyzha.jpg')">Додати до кошика</button>
+        </div>
+    </div>
+
+</div>
+
+<div class="cart-menu" id="cartMenu">
+    <h2>Кошик</h2>
+    <ul id="cartItemList"></ul>
+    <p id="totalPrice">Загальна вартість: 0 грн</p>
+    <button class="checkout-button" onclick="showPaymentMenu()">Перейти до оплати</button>
+
+    <div id="paymentMenu" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closePaymentMenu()">&times;</span>
+            <h2>Меню покупки</h2>
+            <form id="paymentForm" onsubmit="return makePayment()">
+                <label for="fullName">Ваше Ім'я та прізвище:</label>
+                <input type="text" id="fullName" required>
+                <label for="phoneNumber">Номер телефону:</label>
+                <input type="tel" id="phoneNumber" required>
+                <label for="postOffice">В яке відділення нової пошти доставляти?</label>
+                <input type="text" id="postOffice" required>
+                <button type="submit">Оплатити</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="cart-icon" onclick="toggleCartMenu()">
+    <img src="cart.png" alt="Кошик">
+    <div class="cart-items" id="cartItems">0</div>
+</div>
+
+<div id="paymentInstructions" style="display: none;">
+    <img src="loading.gif" alt="Завантаження">
+    <p>Чекаємо завершення оплати...</p>
+    <p id="timer">5:00</p>
+</div>
+
+<script>
+    // Ваш JavaScript-код
+    var cart = [];
+
+    function addToCart(productName, price, imgSrc) {
+        cart.push({name: productName, price: price, image: imgSrc});
+        updateCart();
+    }
+
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        updateCart();
+    }
+
+    function updateCart() {
+        var cartItems = document.getElementById('cartItems');
+        var cartItemList = document.getElementById('cartItemList');
+        var totalPrice = document.getElementById('totalPrice');
+        var total = 0;
+
+        cartItems.innerText = cart.length;
+        cartItemList.innerHTML = '';
+
+        cart.forEach(function(item, index) {
+            var listItem = document.createElement('li');
+            listItem.innerHTML = `
+                <img src="${item.image}" alt="${item.name}">
+                ${item.name} - ${item.price} грн
+                <button class="delete-button" onclick="removeFromCart(${index})">Видалити з кошика</button>
+            `;
+            cartItemList.appendChild(listItem);
+            total += item.price;
+        });
+
+        totalPrice.innerText = 'Загальна вартість: ' + total + ' грн';
+    }
+
+    function toggleCartMenu() {
+        var cartMenu = document.getElementById('cartMenu');
+        cartMenu.classList.toggle('show');
+    }
+
+    function showPaymentMenu() {
+        var paymentMenu = document.getElementById('paymentMenu');
+        paymentMenu.style.display = 'block';
+    }
+
+    function closePaymentMenu() {
+        var paymentMenu = document.getElementById('paymentMenu');
+        paymentMenu.style.display = 'none';
+    }
+
+    function makePayment() {
+        var fullName = document.getElementById('fullName').value;
+        var phoneNumber = document.getElementById('phoneNumber').value;
+        var postOffice = document.getElementById('postOffice').value;
+
+        // Redirect to pay.html after entering postOffice
+        if (postOffice !== '') {
+            window.location.href = 'pay.html';
+        } else {
+            // Отримання загальної суми до оплати
+            var totalPayment = 0;
+            cart.forEach(function(item) {
+                totalPayment += item.price;
+            });
+
+            // Формування повідомлення про оплату
+            var paymentMessage = `Переведіть кошти на карту 5169755904345390. Сума до оплати: ${totalPayment.toFixed(2)} грн`;
+
+            // Отримання елемента для відображення інструкцій оплати
+            var paymentInstructions = document.getElementById('paymentInstructions');
+
+            // Відображення інструкцій оплати
+            paymentInstructions.style.display = 'block';
+            paymentInstructions.innerHTML = `
+                <img src="loading.gif" alt="Завантаження">
+                <p>${paymentMessage}</p>
+                <p>Чекаємо завершення оплати...</p>
+                <p id="timer">5:00</p>
+            `;
+        }
+
+        // Заборона відправки форми
+        return false;
+    }
+</script>
+</body>
+</html>

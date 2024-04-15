@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Перевірка дійсності API ключа Imgur</title>
+</head>
+<body>
+    <h1>Перевірка дійсності API ключа Imgur</h1>
+    <button onclick="checkImgurAPIKey()">Перевірити дійсність ключа</button>
+    <p id="result"></p>
+
+    <script>
+        function checkImgurAPIKey() {
+            var apiKey = prompt("Будь ласка, введіть ваш API ключ Imgur:");
+            if (apiKey) {
+                fetch("https://api.imgur.com/3/account/me", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Client-ID " + apiKey
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        document.getElementById("result").innerText = "API ключ дійсний!";
+                    } else {
+                        document.getElementById("result").innerText = "API ключ не дійсний.";
+                    }
+                })
+                .catch(error => {
+                    console.error("Сталася помилка під час перевірки ключа:", error);
+                    document.getElementById("result").innerText = "Сталася помилка під час перевірки ключа. Перевірте консоль для деталей.";
+                });
+            }
+        }
+    </script>
+</body>
+</html>
