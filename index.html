@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Юрчік Шоп - магазин вейп-товарів</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .product {
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .product img {
+            max-width: 100%;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .product h3 {
+            color: #007bff;
+        }
+
+        .product p {
+            color: #666;
+            text-align: center;
+        }
+
+        .product button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .product button:hover {
+            background-color: #0056b3;
+        }
+
+        .cart-menu {
+            position: fixed;
+            top: 0;
+            right: 0;
+            background-color: #fff;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .cart-menu.show {
+            transform: translateX(0);
+        }
+
+        .cart-menu h2 {
+            margin-top: 0;
+        }
+
+        .cart-menu ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .cart-menu li {
+            margin-bottom: 20px;
+        }
+
+        .cart-menu img {
+            max-width: 70px;
+            border-radius: 5px;
+        }
+
+        .cart-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            cursor: pointer;
+        }
+
+        .cart-icon img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .cart-items {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            text-align: center;
+            line-height: 25px;
+            font-size: 16px;
+        }
+
+        .checkout-button {
+            display: block;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .checkout-button:hover {
+            background-color: #218838;
+        }
+
+        @media only screen and (min-width: 600px) {
+            .product {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .product img {
+                max-width: 40%;
+            }
+
+            .product div {
+                width: 50%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Ласкаво просимо до Юрчік Шоп!</h1>
+
+    <div class="product">
+        <img src="barsetka.jpg" alt="Барсетка для вейпу">
+        <div>
+            <h3>Барсетка для вейпу</h3>
+            <p><strong>Опис:</strong> Стильна і зручна барсетка для зберігання та перенесення вашого вейп-обладнання.</p>
+            <p><strong>Ціна:</strong> 600 грн</p>
+            <button onclick="addToCart('Барсетка для вейпу', 600, 'barsetka.jpg')">Додати до кошика</button>
+        </div>
+    </div>
+
+    <div class="product">
+        <img src="pod.jpg" alt="Под для вейпу">
+        <div>
+            <h3>Под для вейпу</h3>
+            <p><strong>Опис:</strong> Найсучасніші поди для вашого вейпу, забезпечать максимальний комфорт та смакові відчуття.</p>
+            <p><strong>Ціна:</strong> 220 грн</p>
+            <button onclick="addToCart('Под для вейпу', 220, 'pod.jpg')">Додати до кошика</button>
+        </div>
+    </div>
+
+    <div class="product">
+        <img src="zhyzha.jpg" alt="Жижа для вейпу">
+        <div>
+            <h3>Жижа для вейпу</h3>
+            <p><strong>Опис:</strong> Великий вибір найсмачніших жиж для вашого вейпу. Від класичних смаків до екзотичних комбінацій.</p>
+            <p><strong>Ціна:</strong> Від 150 грн</p>
+            <button onclick="addToCart('Жижа для вейпу', 150, 'zhyzha.jpg')">Додати до кошика</button>
+        </div>
+    </div>
+
+</div>
+
+<div class="cart-menu" id="cartMenu">
+    <h2>Кошик</h2>
+    <ul id="cartItemList"></ul>
+    <p id="totalPrice">Загальна вартість: 0 грн</p>
+    <button class="checkout-button" onclick="checkout()">Перейти до оплати</button>
+</div>
+
+<div class="cart-icon" onclick="toggleCartMenu()">
+    <img src="cart.png" alt="Кошик">
+    <div class="cart-items" id="cartItems">0</div>
+</div>
+
+<script>
+    var cart = [];
+
+    function addToCart(productName, price, imgSrc) {
+        cart.push({name: productName, price: price, image: imgSrc});
+        updateCart();
+    }
+
+    function updateCart() {
+        var cartItems = document.getElementById('cartItems');
+        var cartItemList = document.getElementById('cartItemList');
+        var totalPrice = document.getElementById('totalPrice');
+        var total = 0;
+
+        cartItems.innerText = cart.length;
+        cartItemList.innerHTML = '';
+
+        cart.forEach(function(item) {
+            var listItem = document.createElement('li');
+            listItem.innerHTML = '<img src="' + item.image + '" alt="' + item.name + '"> ' + item.name + ' - ' + item.price + ' грн';
+            cartItemList.appendChild(listItem);
+            total += item.price;
+        });
+
+        totalPrice.innerText = 'Загальна вартість: ' + total + ' грн';
+    }
+
+    function toggleCartMenu() {
+        var cartMenu = document.getElementById('cartMenu');
+        cartMenu.classList.toggle('show');
+    }
+
+    function checkout() {
+        // Додайте ваш код для обробки оплати тут
+        alert('Переходите до оплати!');
+    }
+</script>
+
+</body>
+</html>
