@@ -58,7 +58,7 @@
                 <label for="fullName">Ваше Ім'я та прізвище:</label>
                 <input type="text" id="fullName" required>
                 <label for="phoneNumber">Номер телефону:</label>
-                <input type="tel" id="phoneNumber" required>
+                <input type="tel" id="phoneNumber" pattern="^\+380[0-9]{9}$" oninput="formatPhoneNumber(this)" required title="Будь ласка, введіть номер телефону у форматі +380XXXXXXXXX">
                 <label for="postOffice">В яке відділення нової пошти доставляти?</label>
                 <input type="text" id="postOffice" required>
                 <button type="submit">Оплатити</button>
@@ -135,34 +135,34 @@
         var phoneNumber = document.getElementById('phoneNumber').value;
         var postOffice = document.getElementById('postOffice').value;
 
-        // Redirect to pay.html after entering postOffice
-        if (postOffice !== '') {
-            window.location.href = 'pay.html';
-        } else {
-            // Отримання загальної суми до оплати
-            var totalPayment = 0;
-            cart.forEach(function(item) {
-                totalPayment += item.price;
-            });
+        // Отримання загальної суми до оплати
+        var totalPayment = 0;
+        cart.forEach(function(item) {
+            totalPayment += item.price;
+        });
 
-            // Формування повідомлення про оплату
-            var paymentMessage = `Переведіть кошти на карту 5169755904345390. Сума до оплати: ${totalPayment.toFixed(2)} грн`;
+        // Збереження даних про оплату в локальному сховищі
+        localStorage.setItem('paymentData', JSON.stringify({
+            fullName: fullName,
+            phoneNumber: phoneNumber,
+            postOffice: postOffice,
+            totalPayment: totalPayment
+        }));
 
-            // Отримання елемента для відображення інструкцій оплати
-            var paymentInstructions = document.getElementById('paymentInstructions');
-
-            // Відображення інструкцій оплати
-            paymentInstructions.style.display = 'block';
-            paymentInstructions.innerHTML = `
-                <img src="loading.gif" alt="Завантаження">
-                <p>${paymentMessage}</p>
-                <p>Чекаємо завершення оплати...</p>
-                <p id="timer">5:00</p>
-            `;
-        }
+        // Перенаправлення на сторінку оплати ПІСЛЯ збереження даних
+        window.location.href = 'pay.html';
 
         // Заборона відправки форми
         return false;
+    }
+
+    function formatPhoneNumber(input) {
+        // Форматування телефонного номера у форматі +380XXYYYYYYY
+        var cleaned = ('' + input.value).replace(/\D/g, '');
+        var match = cleaned.match(/^(\d{0,3})(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})$/);
+        if (match) {
+            input.value = '+380' + match[2] + match[3] + match[4] + match[5];
+        }
     }
 </script>
 </body>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оплата</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f3f3;
+        }
+
+        .container {
+            max-width: 300px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        #paymentDetails {
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            max-width: 80%;
+            border-radius: 8px;
+            animation-name: modalopen;
+            animation-duration: 0.4s;
+        }
+
+        @keyframes modalopen {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Оплата</h1>
+        <div id="paymentDetails">
+            <p><strong>Ім'я та прізвище:</strong> <span id="fullName"></span></p>
+            <p><strong>Номер телефону:</strong> <span id="phoneNumber"></span></p>
+            <p><strong>Адреса відділення Нової Пошти:</strong> <span id="postOffice"></span></p>
+            <p><strong>Загальна сума до оплати:</strong> <span id="totalPayment"></span></p>
+        </div>
+        <button onclick="showPaymentMenu()">Підтвердити замовлення</button>
+
+        <div class="modal" id="paymentMenu">
+            <div class="modal-content" style="max-width: 300px;">
+                <p style="font-size: 16px;">Переведіть кошти на карту:</p>
+                <p style="font-size: 16px;">5169755904345390</p>
+                <p style="font-size: 16px;">В суммі: <span id="randomAmount"></span> грн</p>
+                <div style="text-align: center;">
+                    <img src="loading.gif" alt="Loading" style="width: 50px; height: auto; display: inline-block;">
+                    <p style="font-size: 16px; display: inline-block; vertical-align: top;">Очікування оплати</p>
+                    <img src="loading.gif" alt="Loading" style="width: 50px; height: auto; display: inline-block;">
+                    <button onclick="payComplete()">Я оплатив</button>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            function payComplete() {
+                var button = document.querySelector('#paymentMenu button');
+                button.innerText = "Я оплатив";
+                alert("Дякуємо за оплату! Тепер ти йдеш Нахуй.");
+            }
+        </script>
+        
+        
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var paymentData = JSON.parse(localStorage.getItem('paymentData'));
+
+            if (paymentData) {
+                document.getElementById('fullName').innerText = paymentData.fullName;
+                document.getElementById('phoneNumber').innerText = paymentData.phoneNumber;
+                document.getElementById('postOffice').innerText = paymentData.postOffice;
+                document.getElementById('totalPayment').innerText = paymentData.totalPayment + ' грн';
+                document.getElementById('randomAmount').innerText = (paymentData.totalPayment + Math.floor(Math.random() * 100) / 100).toFixed(2);
+            }
+
+            // Очищення локального сховища після використання даних
+            localStorage.removeItem('paymentData');
+        });
+
+        function showPaymentMenu() {
+            var paymentMenu = document.getElementById('paymentMenu');
+            paymentMenu.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
